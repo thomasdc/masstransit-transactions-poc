@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,11 +24,14 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<IEnumerable<Blog>> Get()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var maxId = await _context.Blogs.MaxAsync(_ => _.BlogId);
-            var blog = new Blog {BlogId = maxId + 1, Url = $"http://foo.bar/{Guid.NewGuid()}"};
+            var blog = new Blog { BlogId = maxId + 1, Url = $"http://foo.bar/{Guid.NewGuid()}" };
             await _context.Blogs.AddAsync(blog);
             await _context.SaveChangesAsync();
-            return await _context.Blogs.ToListAsync();
+            var blogs = await _context.Blogs.ToListAsync();
+            scope.Complete();
+            return blogs;
         }
     }
 }
