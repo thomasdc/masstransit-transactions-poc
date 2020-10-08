@@ -1,6 +1,7 @@
 using Amazon.SimpleNotificationService;
 using Amazon.SQS;
 using MassTransit;
+using MassTransit.Transactions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,8 @@ namespace Api
 
             services.AddMassTransit(x =>
             {
+                x.AddTransactionalBus();
+
                 x.AddConsumersFromNamespaceContaining<Startup>();
                 x.AddBus(provider => Bus.Factory.CreateUsingAmazonSqs(cfg =>
                 {
@@ -39,12 +42,13 @@ namespace Api
                         config.SecretKey("matter");
                     });
 
-                    cfg.Message<ISomeEvent>(m => m.SetEntityName("SomeTopic"));
+                    const string topicName = "BlogsTopic";
+                    cfg.Message<INewBlogRegistered>(m => m.SetEntityName(topicName));
 
-                    cfg.ReceiveEndpoint("SomeTopic_subscription_queue", e =>
+                    cfg.ReceiveEndpoint("BlogsTopic_subscription_queue", e =>
                     {
-                        e.Subscribe("SomeTopic");
-                        e.ConfigureConsumer<SomeEventConsumer>(provider);
+                        e.Subscribe(topicName);
+                        e.ConfigureConsumer<NewBlogRegisteredConsumer>(provider);
                     });
                 }));
             });
