@@ -3,6 +3,7 @@ using Amazon.SQS;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +23,9 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<BloggingContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("BloggingDatabase")));
+
             services.AddMassTransit(x =>
             {
                 x.AddConsumersFromNamespaceContaining<Startup>();

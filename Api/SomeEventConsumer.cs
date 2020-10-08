@@ -7,7 +7,7 @@ namespace Api
     {
         public async Task Consume(ConsumeContext<ISomeEvent> context)
         {
-            throw new System.NotImplementedException();
+            await Task.CompletedTask;
         }
     }
 }
