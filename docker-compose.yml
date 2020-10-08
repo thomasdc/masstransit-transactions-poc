@@ -1,0 +1,45 @@
+version: '2.1'
+
+services:
+  postgres:
+    image: "postgres:10.10"
+    container_name: mt_poc_postgres
+    restart: always
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+    networks:
+      - foobarlocal
+    ports:
+      - '5932:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+  localstack:
+    image: localstack/localstack:0.11.2
+    container_name: mt_poc_localstack
+    networks:
+      - foobarlocal
+    ports:
+      - "4666-4699:4566-4599"
+    environment:
+      - SERVICES=${SERVICES- }
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      # uncomment when running on unix
+      #- DOCKER_HOST=unix:///var/run/docker.sock
+      # comment when running on unix
+      - DOCKER_HOST=http://localhost:2375
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+networks:
+  foobarlocal:
+    name: foobar-local
+volumes:
+  postgres:
+    driver: local
+  localstack:
+    driver: local

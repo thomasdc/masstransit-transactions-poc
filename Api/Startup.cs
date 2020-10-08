@@ -36,8 +36,8 @@ namespace Api
                 {
                     cfg.Host("us-east-1", config =>
                     {
-                        config.Config(new AmazonSQSConfig {ServiceURL = "http://localhost:4566"});
-                        config.Config(new AmazonSimpleNotificationServiceConfig {ServiceURL = "http://localhost:4566"});
+                        config.Config(new AmazonSQSConfig {ServiceURL = "http://localhost:4666"});
+                        config.Config(new AmazonSimpleNotificationServiceConfig {ServiceURL = "http://localhost:4666"});
                         config.AccessKey("does_not");
                         config.SecretKey("matter");
                     });
