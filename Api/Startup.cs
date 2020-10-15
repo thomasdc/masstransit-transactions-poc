@@ -25,7 +25,7 @@ namespace Api
         {
             services.AddControllers();
             services.AddDbContext<BloggingContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("BloggingDatabase")));
+                options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
 
             services.AddMassTransit(x =>
             {

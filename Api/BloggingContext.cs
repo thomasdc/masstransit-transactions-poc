@@ -10,6 +10,13 @@ namespace Api
         {
             
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Blog>().HasKey(_ => _.BlogId);
+            modelBuilder.Entity<Blog>().Property(_ => _.BlogId).UseIdentityColumn();
+            modelBuilder.Entity<Blog>().Property(_ => _.Url);
+        }
     }
 
     public class Blog
